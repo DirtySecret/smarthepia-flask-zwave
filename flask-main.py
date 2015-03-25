@@ -8,7 +8,6 @@ sys.path.insert(0, file_path)
 
 from flask import Flask, render_template, jsonify, Response
 from backend import Backend
-#from fake_backend import Backend
 
 app = Flask(__name__)
 
@@ -41,12 +40,24 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
         	<td>Restart Z-Wave Network</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/heal</b><br/>
-        	<td>Try to refresh every value in nodes (config & sensor values)</td>
+		<td><b>/healNetworkAndRoutes</b></td>
+		<td>Heal network by asking nodes to rediscover their neighbours + Init new routes</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/updateNeighbours/{$sensor_id}</b></td>
-		<td>Update the list of neighbours for sensor $sensor_id</td>
+		<td><b>/healNetworkOnly</b></td>
+		<td>Heal network by asking nodes to rediscover their neighbours</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+		<td><b>/healNodeAndRoutes/{$sensor_id}</b></td>
+		<td>Heal sensor $sensor_id by rediscovering its neighbours + Init new routes</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+		<td><b>/healNodeOnly/{$sensor_id}</b></td>
+		<td>Heal sensor $sensor_id by rediscovering its neighbours</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+		<td><b>/refreshNetworkInfo</b></td>
+		<td>Refresh the informations held by nodes in the network (config & sensor values)</td>
         </tr>
         <tr style="border: 1px solid black;">
 		<td><b>/sensor/{$sensor_id}/get_temperature</b></td>
@@ -101,6 +112,41 @@ def devices_list():
 	    devices_list += str(key) + "=" + str(val) + "\n"
     return Response(devices_list, mimetype="text/plain")
     #return render_template("index.html")
+    
+@app.route('/rglist')
+def rglist():
+    return backend.rgList()
+
+@app.route('/networkinfo')
+def netinfo():
+    return backend.network_info()
+    
+@app.route('/restart')
+def networkstop():
+    backend.stop()
+    time.sleep(5)
+    backend.start()
+    return "Z-Wave Network Restarted"
+
+@app.route('/healNetworkAndRoutes')
+def healNetAndRoutes():
+    return backend.healNetwork(True)
+    
+@app.route('/healNetworkOnly')
+def healNet():
+    return backend.healNetwork()
+    
+@app.route('/healNodeAndRoutes/<node>')
+def healNodeAndRoute(node):
+    return backend.healNode(node, True)
+    
+@app.route('/healNodeOnly/<node>')
+def healNode(node):
+    return backend.healNode(node)
+
+@app.route('/refreshNetworkInfo')	
+def refreshNetwork(self):
+    return backend.refreshNodes()
 
 @app.route('/sensor/<node>/get_temperature')
 def get_temperature(node):
@@ -122,37 +168,13 @@ def get_motion(node):
 def rgtest():
     return backend.rgtest_method()
 
-@app.route('/updateNeighbours/<node>')
-def upN(node):
-    return backend.updateNeighboursList(node)
+#@app.route('/updateNeighbours/<node>')
+#def upN(node):
+#    return backend.updateNeighboursList(node)
 
-@app.route('/restart')
-def networkstop():
-    backend.stop()
-    time.sleep(5)
-    backend.start()
-    return "Z-Wave Network Restarted"
 
-@app.route('/heal')
-def healNet():
-    return backend.healNetwork()
-
-@app.route('/rglist')
-def rglist():
-    return backend.rgList()
-
-@app.route('/networkinfo')
-def netinfo():
-    return backend.network_info()
-
-#@app.route('/values/<value>')
-def values(value):
-    try:
-        #return "Value for %s is %s" % (value, backend.values[value])
-        return "%s" % backend.values[value]
-    except KeyError:
-        #return "Value %s not found" % value
-        return "0"
+    
+# OLD METHODS    
 
 @app.route('/temperature/<node>')
 def temperature(node):
@@ -169,6 +191,8 @@ def luminance(node):
 @app.route('/motion/<node>')
 def motion(node):
     return backend.get_motion(node)
+
+# CONFIGURATION
 
 @app.route('/configuration')
 def configuration():
