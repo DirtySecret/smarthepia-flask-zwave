@@ -40,6 +40,14 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
         	<td>Restart Z-Wave Network</td>
         </tr>
         <tr style="border: 1px solid black;">
+		<td><b>/start</b><br/>
+        	<td>Start the Z-Wave Network</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+		<td><b>/stop</b><br/>
+        	<td>Stop the Z-Wave Network</td>
+        </tr>
+        <tr style="border: 1px solid black;">
 		<td><b>/healNetworkAndRoutes</b></td>
 		<td>Heal network by asking nodes to rediscover their neighbours + Init new routes</td>
         </tr>
@@ -122,11 +130,22 @@ def netinfo():
     return backend.network_info()
     
 @app.route('/restart')
-def networkstop():
+def networkrestart():
     backend.stop()
     time.sleep(5)
     backend.start()
     return "Z-Wave Network Restarted"
+
+@app.route('/start')
+def networkstart():
+    backend.start()
+    return "Z-Wave Network Started"
+
+@app.route('/stop')
+def networkstop():
+    backend.stop()
+    time.sleep(5)
+    return "Z-Wave Network Stopped"
 
 @app.route('/healNetworkAndRoutes')
 def healNetAndRoutes():
