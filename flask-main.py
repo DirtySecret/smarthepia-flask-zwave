@@ -76,8 +76,8 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
 		<td>Return current humidity for sensor $sensor_id</td>
         </tr>
         <tr style="border: 1px solid black;">		
-		<td><b>/sensor/{$sensor_id}/get_luminosity</b></td>
-		<td>Return current luminosity for sensor $sensor_id</td>
+		<td><b>/sensor/{$sensor_id}/get_luminance</b></td>
+		<td>Return current luminance for sensor $sensor_id</td>
 	</tr>
 	<tr style="border: 1px solid black;">	
 		<td><b>/sensor/{$sensor_id}/get_motion</b></td>
@@ -126,45 +126,45 @@ def rglist():
     return backend.rgList()
 
 @app.route('/networkinfo')
-def netinfo():
+def networkinfo():
     return backend.network_info()
     
 @app.route('/restart')
-def networkrestart():
+def restart():
     backend.stop()
     time.sleep(5)
     backend.start()
     return "Z-Wave Network Restarted"
 
 @app.route('/start')
-def networkstart():
+def start():
     backend.start()
     return "Z-Wave Network Started"
 
 @app.route('/stop')
-def networkstop():
+def stop():
     backend.stop()
     time.sleep(5)
     return "Z-Wave Network Stopped"
 
 @app.route('/healNetworkAndRoutes')
-def healNetAndRoutes():
+def healNetworkAndRoutes():
     return backend.healNetwork(True)
     
 @app.route('/healNetworkOnly')
-def healNet():
+def healNetworkOnly():
     return backend.healNetwork()
     
 @app.route('/healNodeAndRoutes/<node>')
-def healNodeAndRoute(node):
+def healNodeAndRoutes(node):
     return backend.healNode(node, True)
     
 @app.route('/healNodeOnly/<node>')
-def healNode(node):
+def healNodeOnly(node):
     return backend.healNode(node)
 
 @app.route('/refreshNetworkInfo')	
-def refreshNetwork(self):
+def refreshNetworkInfo():
     return backend.refreshNodes()
 
 @app.route('/sensor/<node>/get_temperature')
@@ -217,27 +217,6 @@ def motion(node):
 def configuration():
     return backend.set_sensor()
 
-#@app.route('/json/values/<node>')
-def json_values(node):
-    return jsonify(**{'values':backend.get_sensor_values(node)})
-
-#@app.route('/switch/<node>/<on_off_check>')
-def switch(node, on_off_check):
-    if on_off_check == 'on':
-        backend.switch_on(node)
-        return "switch %s switched on" % node
-    elif on_off_check == 'off':
-        backend.switch_off(node)
-        return "switch %s switched on" % node
-    elif on_off_check == 'check':
-        val = backend.get_switch_status(node)
-        if val:
-            return "switch %s is currently on" % node
-        else:
-            return "switch %s is currently off" % node
-    else:
-        return "unrecognised command - choose on/off/check"
-
 @app.route('/logtest')
 def log():
     return 1/0
@@ -251,12 +230,6 @@ if __name__ == '__main__':
     	file_handler.setLevel(logging.DEBUG)
     	file_handler.setFormatter(Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     	app.logger.addHandler(file_handler)
-
-	#formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
-    	#handler = FileHandler("Flask_pi1.log", "ax")
-    	#handler.setLevel(logging.DEBUG)
-    	#handler.setFormatter(formatter)
-    	#app.logger.addHandler(handler)
 
         app.run(host='::', debug=False, use_reloader=False)
 
