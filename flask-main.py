@@ -3,6 +3,8 @@
 import sys
 import os
 import logging
+import time
+
 file_path = os.path.dirname(__file__)
 sys.path.insert(0, file_path)
 
@@ -14,7 +16,8 @@ app = Flask(__name__)
 backend = Backend()
 
 API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
-	<table style="width: 100%; margin: auto; border-collapse:collapse; border: 1px solid black;">
+	<h2>Network Routes</h2>
+        <table style="width: 100%; margin: auto; border-collapse:collapse; border: 1px solid black;">
 	<tr style="background-color: black; color: white; font-size: x-large;">
 		<th style="witdh: 40%;">Routes</th>
 		<th style="witdh: 60%;">Description</th>
@@ -28,44 +31,64 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
 		<td>Modern list of all sensors paired with this controller, with more info available</td>
 	</tr>
 	<tr style="border: 1px solid black;">
-		<td><b>/networkinfo</b></td>
+		<td><b>/network/info</b></td>
 		<td>Return some debug values about the network and all the values contained in nodes</td>
 	</tr>
         <tr style="border: 1px solid black;">
-		<td><b>/configuration</b><br/>
+		<td><b>/network/configure</b><br/>
 		<td>Send config values to every awake nodes (e.g.: Interval in seconds to report Sensors Values)</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/restart</b><br/>
-        	<td>Restart Z-Wave Network</td>
+                <td><b>/network/configuration</b><br/>
+                <td>List the config values in every awake nodes (e.g.: Interval in seconds to report Sensors Values)</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/start</b><br/>
-        	<td>Start the Z-Wave Network</td>
+                <td><b>/network/restart</b><br/>
+                <td>Restart Z-Wave Network</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/stop</b><br/>
-        	<td>Stop the Z-Wave Network</td>
+                <td><b>/network/start</b><br/>
+                <td>Start the Z-Wave Network</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/healNetworkAndRoutes</b></td>
-		<td>Heal network by asking nodes to rediscover their neighbours + Init new routes</td>
+                <td><b>/network/stop</b><br/>
+                <td>Stop the Z-Wave Network</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/healNetworkOnly</b></td>
-		<td>Heal network by asking nodes to rediscover their neighbours</td>
+                <td><b>/network/healWithRoutes</b></td>
+                <td>Heal network by asking nodes to rediscover their neighbours + Init new routes</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/healNodeAndRoutes/{$sensor_id}</b></td>
-		<td>Heal sensor $sensor_id by rediscovering its neighbours + Init new routes</td>
+                <td><b>/network/healOnly</b></td>
+                <td>Heal network by asking nodes to rediscover their neighbours</td>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/healNodeOnly/{$sensor_id}</b></td>
-		<td>Heal sensor $sensor_id by rediscovering its neighbours</td>
+                <td><b>/network/refresh</b></td>
+                <td>Refresh the informations held by nodes in the network (config & sensor values)</td>
+        </tr>
+        </table>
+        
+        <h2>Sensors Routes</h2>
+        <table style="width: 100%; margin: auto; border-collapse:collapse; border: 1px solid black;">
+        <tr style="background-color: black; color: white; font-size: x-large;">
+                <th style="witdh: 40%;">Routes</th>
+                <th style="witdh: 60%;">Description</th>
         </tr>
         <tr style="border: 1px solid black;">
-		<td><b>/refreshNetworkInfo</b></td>
-		<td>Refresh the informations held by nodes in the network (config & sensor values)</td>
+                <td><b>/sensors/{$sensor_id}/healWithRoutes</b></td>
+                <td>Heal sensor $sensor_id by rediscovering its neighbours + Init new routes</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+                <td><b>/sensors/{$sensor_id}/healOnly</b></td>
+                <td>Heal sensor $sensor_id by rediscovering its neighbours</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+                <td><b>/sensors/{$sensor_id}/refresh</b></td>
+                <td>Refresh node info for sensor $sensor_id</td>
+        </tr>
+        <tr style="border: 1px solid black;">
+		<td><b>/sensor/{$sensor_id}/get_all</b></td>
+		<td>Return all measures (temp, hum, lum, motion) for sensor $sensor_id</td>
         </tr>
         <tr style="border: 1px solid black;">
 		<td><b>/sensor/{$sensor_id}/get_temperature</b></td>
@@ -83,27 +106,43 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
 		<td><b>/sensor/{$sensor_id}/get_motion</b></td>
 		<td>Return presence detection value for sensor $sensor_id</td>
 	</tr>
-	</table>
-	<br/><br/>
-	JSON format :<br/>
-	<span style="font-family:'Courier New';font-size:13">{<br/>
-	&nbsp;&nbsp;"controller": CONTROLLER_NAME,<br/>
+	<tr style="border: 1px solid black;">   
+                <td><b>/sensor/add</b></td>
+                <td>Add a device when its add button is pressed</td>
+        </tr>
+        <tr style="border: 1px solid black;">   
+                <td><b>/sensor/remove</b></td>
+                <td>Remove a device when its button is pressed</td>
+        </tr>
+        <tr style="border: 1px solid black;">   
+                <td><b>/sensor/{$sensor_id}/set/{$param_index}/to/{$param_value}</b></td>
+                <td>Set $param_value as value for the parameter $param_index</td>
+        </tr>
+        <tr style="border: 1px solid black;">   
+                <td><b>/sensor/{$sensor_id}/get/{$param_index}</b></td>
+                <td>Get the value for the parameter $param_index</td>
+        </tr>
+        </table>
+        <br/><br/>
+        JSON format :<br/>
+        <span style="font-family:'Courier New';font-size:13">{<br/>
+        &nbsp;&nbsp;"controller": CONTROLLER_NAME,<br/>
         &nbsp;&nbsp;"location": SENSOR_LOCATION, <br/>
-	&nbsp;&nbsp;"sensor": SENSOR_ID,<br/>
-	&nbsp;&nbsp;"type": SENSOR_TYPE, <br/>
-	&nbsp;&nbsp;"updateTime": TIMESTAMP,<br/> 
-	&nbsp;&nbsp;"value": SENSOR_VALUE<br/>
-	}<br/><br/></span>
-	
-	Fields description :<br/>
-	<span style="font-family:'Courier New';font-size:13">
-	<b>controller</b> : String desribing the controller (Raspberry name)<br/>
-	<b>location</b> : Precise location of the sensor in his network<br/>
-	<b>sensor</b> : Value describing the sensor (integer value)<br/>
-	<b>type</b> : String describing the sensor, possible values : <i>"temperature", "humidity", "presence", "luminosity"</i><br/>
-	<b>updateTime</b> : Timestamp of last update <br/>
-	<b>value</b> : Value of the sensor, possible types : <i>float</i> for temperature(deg. celsius), humidity(%age) and luminosity(lux) ; <i>boolean</i> for presence<br/>
-	</span>
+        &nbsp;&nbsp;"sensor": SENSOR_ID,<br/>
+        &nbsp;&nbsp;"type": SENSOR_TYPE, <br/>
+        &nbsp;&nbsp;"updateTime": TIMESTAMP,<br/> 
+        &nbsp;&nbsp;"value": SENSOR_VALUE<br/>
+        }<br/><br/></span>
+        
+        Fields description :<br/>
+        <span style="font-family:'Courier New';font-size:13">
+        <b>controller</b> : String desribing the controller (Raspberry name)<br/>
+        <b>location</b> : Precise location of the sensor in his network<br/>
+        <b>sensor</b> : Value describing the sensor (integer value)<br/>
+        <b>type</b> : String describing the sensor, possible values : <i>"temperature", "humidity", "presence", "luminosity"</i><br/>
+        <b>updateTime</b> : Timestamp of last update <br/>
+        <b>value</b> : Value of the sensor, possible types : <i>float</i> for temperature(deg. celsius), humidity(%age) and luminosity(lux) ; <i>boolea$
+        </span>
 """
 
 @app.route('/')
@@ -125,47 +164,83 @@ def devices_list():
 def rglist():
     return backend.rgList()
 
-@app.route('/networkinfo')
+@app.route('/network/info')
 def networkinfo():
     return backend.network_info()
+
+@app.route('/network/timestamps')
+def networktimestamp():
+    return backend.network_timestamp()
     
-@app.route('/restart')
+@app.route('/network/restart')
 def restart():
     backend.stop()
     time.sleep(5)
     backend.start()
     return "Z-Wave Network Restarted"
 
-@app.route('/start')
+@app.route('/network/start')
 def start():
     backend.start()
     return "Z-Wave Network Started"
 
-@app.route('/stop')
+@app.route('/network/stop')
 def stop():
     backend.stop()
     time.sleep(5)
     return "Z-Wave Network Stopped"
 
-@app.route('/healNetworkAndRoutes')
+@app.route('/network/healOnly')
+def healNetworkOnly():
+    return backend.healNetwork()
+
+@app.route('/network/healWithRoutes')
 def healNetworkAndRoutes():
     return backend.healNetwork(True)
     
-@app.route('/healNetworkOnly')
-def healNetworkOnly():
-    return backend.healNetwork()
+@app.route('/network/configuration')
+def networkConfiguration():
+    return backend.networkConfiguration()
+
+@app.route('/network/refresh')	
+def refreshNetworkInfo():
+    return backend.refreshNodes()
     
-@app.route('/healNodeAndRoutes/<node>')
-def healNodeAndRoutes(node):
-    return backend.healNode(node, True)
     
-@app.route('/healNodeOnly/<node>')
+    
+############# SENSORS #################    
+    
+@app.route('/sensor/<node>/healOnly')
 def healNodeOnly(node):
     return backend.healNode(node)
 
-@app.route('/refreshNetworkInfo')	
-def refreshNetworkInfo():
-    return backend.refreshNodes()
+@app.route('/sensor/<node>/healWithRoutes')
+def healNodeAndRoutes(node):
+    return backend.healNode(node, True)
+
+@app.route('/sensor/<node>/refresh')
+def refreshNode(node):
+    return backend.refreshNode(node)
+
+@app.route('/sensor/<node>/set/<int:param>/to/<int:value>')
+def set_config_param(node, param, value):
+    return backend.set_node_config_param(node, param, value)
+
+@app.route('/sensor/<node>/set/<int:param>')
+def get_config_param(node, param):
+    return backend.get_node_config_param(node, param)
+
+@app.route('/sensor/add')
+def add_device():
+    return backend.addDevice()
+
+@app.route('/sensor/remove')
+def remove_device():
+    return backend.removeDevice()
+
+@app.route('/sensor/<node>/get_all')
+def get_all_measures(node):
+    return backend.allMeasures(node)
 
 @app.route('/sensor/<node>/get_temperature')
 def get_temperature(node):
@@ -213,7 +288,7 @@ def motion(node):
 
 # CONFIGURATION
 
-@app.route('/configuration')
+@app.route('/network/configure')
 def configuration():
     return backend.set_sensor()
 
