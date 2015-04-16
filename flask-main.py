@@ -68,6 +68,18 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
         </tr>
         </table>
         
+        <h2>Controller Routes</h2>
+        <table style="width: 100%; margin: auto; border-collapse:collapse; border: 1px solid black;">
+        <tr style="background-color: black; color: white; font-size: x-large;">
+                <th style="witdh: 40%;">Routes</th>
+                <th style="witdh: 60%;">Description</th>
+        </tr>
+        <tr style="border: 1px solid black;">
+                <td><b>/controller/reset</b></td>
+                <td>Hard reset the controller and clear sensor indexes (exclude any sensors before reseting the controller)</td>
+        </tr>
+        </table>
+        
         <h2>Sensors Routes</h2>
         <table style="width: 100%; margin: auto; border-collapse:collapse; border: 1px solid black;">
         <tr style="background-color: black; color: white; font-size: x-large;">
@@ -206,6 +218,14 @@ def networkConfiguration():
 def refreshNetworkInfo():
     return backend.refreshNodes()
     
+
+
+########### CONTROLLER ################
+
+@app.route('/controller/reset')
+def hardReset():
+    return backend.reset()
+
     
     
 ############# SENSORS #################    
