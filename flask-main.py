@@ -83,7 +83,7 @@ API_DESCRIPTION = """<h1>API DESCRIPTION</h1>
                 <td>Heal sensor $sensor_id by rediscovering its neighbours</td>
         </tr>
         <tr style="border: 1px solid black;">
-                <td><b>/sensors/{$sensor_id}/refresh</b></td>
+                <td><b>/sensor/{$sensor_id}/refresh</b></td>
                 <td>Refresh node info for sensor $sensor_id</td>
         </tr>
         <tr style="border: 1px solid black;">
