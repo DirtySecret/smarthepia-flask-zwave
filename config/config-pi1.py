@@ -16,4 +16,9 @@ sensors = {
         '18':'A534 - 18',
         '19':'A534 - 19',
         '28':'A500 - 28 = Test couloir',
+	'29':'A VOIR',
+	'30':'A VOIR',
+	'32':'A VOIR',
+	'33':'A VOIR',
+	'34':'A VOIR',
 }
