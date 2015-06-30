@@ -316,6 +316,23 @@ def configuration():
 def log():
     return 1/0
 
+@app.route('/switch/<node>/<on_off_check>')
+def switch(node, on_off_check):
+    if on_off_check == 'on':
+        backend.switch_on(node)
+        return "switch %s switched on" % node
+    elif on_off_check == 'off':
+        backend.switch_off(node)
+        return "switch %s switched on" % node
+    elif on_off_check == 'check':
+        val = backend.get_switch_status(node)
+        if val:
+            return "switch %s is currently on" % node
+        else:
+            return "switch %s is currently off" % node
+    else:
+        return "unrecognised command - choose on/off/check"
+
 from logging import FileHandler, Formatter, DEBUG
 
 if __name__ == '__main__':
