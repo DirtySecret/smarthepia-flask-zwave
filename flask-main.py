@@ -246,7 +246,7 @@ def refreshNode(node):
 def set_config_param(node, param, value):
     return backend.set_node_config_param(node, param, value)
 
-@app.route('/sensor/<node>/set/<int:param>')
+@app.route('/sensor/<node>/get/<int:param>')
 def get_config_param(node, param):
     return backend.get_node_config_param(node, param)
 
