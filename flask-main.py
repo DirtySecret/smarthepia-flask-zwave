@@ -323,9 +323,33 @@ def switch(node, on_off_check):
         return "switch %s switched on" % node
     elif on_off_check == 'off':
         backend.switch_off(node)
-        return "switch %s switched on" % node
+        return "switch %s switched off" % node
     elif on_off_check == 'check':
         val = backend.get_switch_status(node)
+        if val:
+            return "switch %s is currently on" % node
+        else:
+            return "switch %s is currently off" % node
+    elif on_off_check == 'on1':
+        backend.switch_on1(node)
+        return "switch %s switched on" % node
+    elif on_off_check == 'off1':
+        backend.switch_off1(node)
+        return "switch %s switched on" % node
+    elif on_off_check == 'check1':
+        val = backend.get_switch_status1(node)
+        if val:
+            return "switch %s is currently on" % node
+        else:
+            return "switch %s is currently off" % node
+    elif on_off_check == 'on2':
+        backend.switch_on2(node)
+        return "switch %s switched on" % node
+    elif on_off_check == 'off2':
+        backend.switch_off2(node)
+        return "switch %s switched off" % node
+    elif on_off_check == 'check2':
+        val = backend.get_switch_status2(node)
         if val:
             return "switch %s is currently on" % node
         else:
