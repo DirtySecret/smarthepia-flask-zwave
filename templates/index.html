@@ -162,6 +162,14 @@
 				<td><b>/sensors/{$sensor_id}/get/{$param_index}</b></td>
 				<td>Get the value for the parameter $param_index</td>
 			</tr>
+			<tr>
+				<td><b>/sensors/{$sensor_id}/setNameTo/{$name}</b></td>
+				<td>Set the new name of the sensor $sensor_id to the value $name</td>
+			</tr>
+			<tr>
+				<td><b>/sensors/{$sensor_id}/setLocationTo/{$location}</b></td>
+				<td>Set the new location of the sensor $sensor_id to the value $location</td>
+			</tr>
         </table>
 		
 		<h2>Switches Endpoints (Fibaro)</h2>
@@ -185,6 +193,14 @@
 			<tr>
 				<td><b>/switches/{$switch_id}/{$control_type}</b></td>
 				<td>Apply the $control_type (on, off or check) to the switch $switch_id</td>
+			</tr>
+			<tr>
+				<td><b>/switches/{$switch_id}/setNameTo/{$name}</b></td>
+				<td>Set the new name of the switch $switch_id to the value $name</td>
+			</tr>
+			<tr>
+				<td><b>/switches/{$switch_id}/setLocationTo/{$location}</b></td>
+				<td>Set the new location of the switch $switch_id to the value $location</td>
 			</tr>
         </table>
 		
