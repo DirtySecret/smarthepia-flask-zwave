@@ -116,11 +116,11 @@
 			</tr>
 			<tr>   
 				<td><b><a href="/sensors/add">/sensors/add</a></b></td>
-				<td>Add a device to the network when its button is pressed</td>
+				<td>Add a sensor to the network when its button is pressed</td>
 			</tr>
 			<tr>   
 				<td><b><a href="/sensors/remove">/sensors/remove</a></b></td>
-				<td>Remove a device from the network when its button is pressed</td>
+				<td>Remove a sensor from the network when its button is pressed</td>
 			</tr>
 			<tr>
 				<td><b>/sensors/{$sensor_id}/all_measures</b></td>
@@ -170,17 +170,17 @@
 				<th>Routes</th>
 				<th>Description</th>
 			</tr>
-			<!--<tr>   
-				<td><b><a href="/switches/add">/switches/add</a></b></td>
-				<td>Add a device to the network when its button is pressed</td>
-			</tr>
-			<tr>   
-				<td><b><a href="/switches/remove">/switches/remove</a></b></td>
-				<td>Remove a device from the network when its button is pressed</td>
-			</tr>-->
 			<tr>
 				<td><b><a href="/switches">/switches</a></b></td>
 				<td>Display the list of all switches in the network</td>
+			</tr>
+			<tr>   
+				<td><b><a href="/switches/add">/switches/add</a></b></td>
+				<td>Add a switch to the network when its button is pressed</td>
+			</tr>
+			<tr>   
+				<td><b><a href="/switches/remove">/switches/remove</a></b></td>
+				<td>Remove a switch from the network when its button is pressed</td>
 			</tr>
 			<tr>
 				<td><b>/switches/{$switch_id}/{$control_type}</b></td>
@@ -188,7 +188,7 @@
 			</tr>
         </table>
 		
-		<h2>Devices Endpoints (Fibaro)</h2>
+		<h2>Devices Endpoints (All devices)</h2>
 		<table>
 			<tr>
 				<th>Routes</th>
@@ -197,6 +197,14 @@
 			<tr>
 				<td><b><a href="/devices">/devices</a></b></td>
 				<td>Display the list of all devices in the network</td>
+			</tr>
+			<tr>   
+				<td><b><a href="/devices/add">/devices/add</a></b></td>
+				<td>Add a device to the network when its button is pressed</td>
+			</tr>
+			<tr>   
+				<td><b><a href="/devices/remove">/devices/remove</a></b></td>
+				<td>Remove a device from the network when its button is pressed</td>
 			</tr>
 			<tr>
 				<td><b>/devices/{$device_id}/setNameTo/{$name}</b></td>
