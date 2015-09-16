@@ -103,7 +103,7 @@ def get_luminance(node):
 @app.route('/sensors/<int:node>/motion', strict_slashes=False)
 def get_motion(node):
     return backend.motion(node)
-    
+
 @app.route('/sensors/<int:node>/updateRoutes', strict_slashes=False)
 def node_updateRoutes(node):
     return backend.healNode(node, True)
@@ -209,6 +209,11 @@ def add_device():
 @app.route('/sensors/remove', strict_slashes=False)
 def remove_device():
     return backend.removeDevice()
+
+@app.route('/sensors/<int:node>/battery', strict_slashes=False)
+@app.route('/devices/<int:node>/battery', strict_slashes=False)
+def get_battery(node):
+    return backend.battery(node)
 
 @app.route('/sensors/<int:node>/setLocationTo/<value>', strict_slashes=False)
 @app.route('/switches/<int:node>/setLocationTo/<value>', strict_slashes=False)
